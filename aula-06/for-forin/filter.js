@@ -13,6 +13,17 @@ Array.prototype.meuFilter = function (callback) {
   return lista;
 }
 
+Array.prototype.meuFilterr = function(callback) {
+  const lista = [];
+
+  for(let item of this) {
+    const result = callback( item, this.indexOf(item), this );
+    if(!result) continue;
+    lista.push(item)
+  }
+  return lista;
+}
+
 async function main() {
 try {
 const {
@@ -31,7 +42,7 @@ const {
   */
 
 
-const familiaLars = results.meuFilter(function
+const familiaLars = results.meuFilterr(function
   (item, index, lista) {
  console.log(`index ${index}`, lista.length)
  return item.name.toLowerCase().indexOf('lars') !== -1
