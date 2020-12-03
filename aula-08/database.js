@@ -17,7 +17,7 @@ class Database {
   async writeFileAsync(data) {
     const file = this.NOME_ARQUIVO;
     await writeFile(file, JSON.stringify(data));
-    return;
+    return true;
   }
 
   async create(hero) {
@@ -34,6 +34,42 @@ class Database {
 
     return result;
 
+
+  }
+
+  async delete(id) {
+    if(!id) {
+     return await this.writeFileAsync([]);
+    }
+    const data = await this.index();
+    const index = data.findIndex(item => item.id === parseInt(id))
+    if(index === -1) {
+      throw Error('O herói informado não existe!')
+    }
+
+    data.splice( index, 1 );
+    return await this.writeFileAsync(data);
+
+  }
+
+  async update(id, updates) {
+    const dados = await this.readFileAsync();
+    const index = dados.findIndex(item => item.id === parseInt(id));
+    if(index === -1) {
+      throw Error('O herói informado não existe.')
+    }
+
+    const atual = dados[index];
+    const objetoAtualizar = {
+      ...atual,
+      ...updates
+    }
+
+    dados.splice(index, 1)
+    return await this.writeFileAsync([
+      ...dados,
+      objetoAtualizar
+    ]);
 
   }
 
