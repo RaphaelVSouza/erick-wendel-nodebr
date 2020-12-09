@@ -62,6 +62,11 @@ class Postgres extends ICrud {
 
   }
 
+  async delete(id) {
+    const query = id ? { id } : {};
+    return this._herois.destroy({ where: query });
+  }
+
   async connect() {
     this._driver = new Sequelize('heroes', 'docker', 'docker', {
       host: 'localhost',
@@ -69,7 +74,9 @@ class Postgres extends ICrud {
       quoteIdentifiers: false,
     });
     await this.defineModel();
-  }
+  };
+
+
 }
 
 module.exports = Postgres;
