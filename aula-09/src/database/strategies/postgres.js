@@ -53,6 +53,13 @@ class Postgres extends ICrud {
    return this._herois.create(item)
   }
 
+  async read(item = {}) {
+    return this._herois.findAll({ where: item, raw: true });
+
+
+
+  }
+
   async connect() {
     this._driver = new Sequelize('heroes', 'docker', 'docker', {
       host: 'localhost',

@@ -13,7 +13,7 @@ describe('Postgres Strategy', function () {
   this.beforeAll(async function () {
      await context.connect();
   })
-  it('PostgresSQL Connection', async () => {
+  it('PostgresSQL Connection', async function () {
     const result = await context.isConnected();
 
     assert.deepStrictEqual(result, true);
@@ -23,4 +23,10 @@ describe('Postgres Strategy', function () {
 
     assert.deepStrictEqual({ nome, poder }, MOCK_HEROI_CADASTRAR);
   });
+
+  it('listar', async function() {
+    const [ result ] = await context.read({ nome: MOCK_HEROI_CADASTRAR.nome });
+    delete result.id
+    assert.deepStrictEqual(result, MOCK_HEROI_CADASTRAR);
+  })
 })
