@@ -1,54 +1,65 @@
 const assert = require('assert');
 
-const Postgres = require('../database/strategies/postgres');
-
+const Postgres = require('../database/strategies/postgres/postgres');
+const Hero = require('../database/strategies/postgres/model/Hero');
 const Context = require('../database/strategies/base/contextStrategy');
 
-const context = new Context(new Postgres());
-const MOCK_HEROI_CADASTRAR = { nome: 'Gavião Negro', poder: 'Flechas'};
-const MOCK_HEROI_ATUALIZAR = { nome: 'Batman', poder: 'Dinheiro'};
+let context = {};
+let connection = false;
+const MOCK_HERO_REGISTER = { name: 'Gavião Negro', power: 'Flechas'};
+const MOCK_HERO_UPDATE = { name: 'Batman', power: 'Dinheiro'};
 
 
 describe('Postgres Strategy', function () {
   this.timeout(Infinity);
   this.beforeAll(async function () {
-     await context.connect();
+
+     connection = await Postgres.connect();
+
+     const model = await Postgres.defineModel(connection, Hero);
+
+     context = new Context(new Postgres(connection, model))
+
      await context.delete();
-     await context.create(MOCK_HEROI_ATUALIZAR);
+
+     await context.create(MOCK_HERO_UPDATE);
+  });
+
+  this.afterAll(async () => {
+    context.close(connection);
   })
   it('PostgresSQL Connection', async function () {
     const result = await context.isConnected();
 
     assert.deepStrictEqual(result, true);
   })
-  it('cadastrar', async function() {
-   const { nome, poder } = await context.create(MOCK_HEROI_CADASTRAR);
+  it('Create', async function() {
+   const { name, power } = await context.create(MOCK_HERO_REGISTER);
 
-    assert.deepStrictEqual({ nome, poder }, MOCK_HEROI_CADASTRAR);
+    assert.deepStrictEqual({ name, power }, MOCK_HERO_REGISTER);
   });
 
-  it('listar', async function() {
-    const [ result ] = await context.read({ nome: MOCK_HEROI_CADASTRAR.nome });
+  it('Read', async function() {
+    const [ result ] = await context.read({ name: MOCK_HERO_REGISTER.name });
     delete result.id
-    assert.deepStrictEqual(result, MOCK_HEROI_CADASTRAR);
+    assert.deepStrictEqual(result, MOCK_HERO_REGISTER);
   });
 
-  it('atualizar', async function() {
-    const [ itemAtualizar ] = await context.read({nome: MOCK_HEROI_ATUALIZAR.nome});
+  it('Update', async function() {
+    const [ itemAtualizar ] = await context.read({name: MOCK_HERO_UPDATE.name});
     const novoItem = {
-      ...MOCK_HEROI_ATUALIZAR,
-      nome: 'Mulher Maravilha'
+      ...MOCK_HERO_UPDATE,
+      name: 'Mulher Maravilha'
     };
 
     const [ result ] = await context.update(itemAtualizar.id, novoItem);
     const  [ itemAtualizado ] = await context.read({ id: itemAtualizar.id});
 
-
     assert.deepStrictEqual(result, 1);
-    assert.deepStrictEqual(itemAtualizado.nome, novoItem.nome);
+    assert.deepStrictEqual(itemAtualizado.name, novoItem.name);
   })
 
-  it('remover', async function() {
+  it('Delete', async function() {
     const [ item ] = await context.read({});
     const result = await context.delete(item.id);
     assert.deepStrictEqual(result, 1);

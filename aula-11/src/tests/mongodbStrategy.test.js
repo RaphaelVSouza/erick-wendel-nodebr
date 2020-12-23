@@ -21,30 +21,39 @@ const MOCK_HERO_UPDATE = {
 };
 let MOCK_HERO_ID = '';
 let context = {};
+let connection = false;
 
-describe('MongoDB Test Suit', function () {
+describe('MongoDB Strategy', function () {
   this.beforeAll(async () => {
-    const connection = Mongodb.connect();
+    connection = Mongodb.connect();
+
     context = new Context(new Mongodb(connection, Hero));
+
     await context.create(MOCK_HERO_DEFAULT);
+
     const result = await context.create(MOCK_HERO_UPDATE);
-    MOCK_HERO_ID = result._id
+    MOCK_HERO_ID = result._id;
+
   });
 
-  it('Verify Connection', async () => {
+  this.afterAll(async () => {
+    context.close(connection);
+  })
+
+  it('MongoDB Connection', async () => {
     const result = await context.isConnected();
     const expected = 'Connected';
 
     assert.deepStrictEqual(result, expected);
   });
 
-  it('Register', async () => {
+  it('Create', async () => {
     const { name, power } = await context.create(MOCK_HERO_REGISTER);
 
     assert.deepStrictEqual({ name, power }, MOCK_HERO_REGISTER);
   });
 
-  it('Listing', async () => {
+  it('Read', async () => {
     const [{ name, power }] = await context.read({
       name: MOCK_HERO_DEFAULT.name,
     });

@@ -42,10 +42,6 @@ class MongoDB extends ICrud {
 
     const connection = Mongoose.connection;
 
-    connection.once('open', () => {
-      console.log('Connected to the database!');
-    });
-
     return connection;
   }
 
@@ -58,12 +54,15 @@ class MongoDB extends ICrud {
   }
 
   update(id, item) {
-    console.log('id', id)
     return this._schema.updateOne({ _id: id}, {$set: item })
   }
 
   delete(id) {
     return this._schema.deleteOne({ _id: id});
+  }
+
+  close(connection) {
+    return connection.close(true);
   }
 }
 
