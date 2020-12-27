@@ -13,13 +13,16 @@ describe('Test suit for api heroes', function() {
   });
 
   it('Create', async () => {
-    const result = await app.inject({
+    const response = await app.inject({
       method:'POST',
       url: '/heroes',
       payload: MOCHA_CREATE_HERO
     });
-    const { name, power } = JSON.parse(result.payload)
 
+    const { hero } = JSON.parse(response.payload)
+    const { name, power } = hero;
+    const statusCode = response.statusCode;
+    assert.deepStrictEqual(statusCode, 200);
     assert.deepStrictEqual({ name, power }, MOCHA_CREATE_HERO);
   });
 

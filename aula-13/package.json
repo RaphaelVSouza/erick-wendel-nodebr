@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/hapi": "^20.0.3",
+    "joi": "^17.3.0",
     "mocha": "^8.2.1",
     "mongoose": "^5.11.8",
     "pg": "^8.5.1",
