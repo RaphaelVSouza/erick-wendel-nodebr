@@ -29,7 +29,7 @@ class MongoDB extends ICrud {
 
   static connect() {
     Mongoose.connect(
-      'mongodb://localhost:27017/heroes',
+      'mongodb://localhost:27017/apiheroes',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -60,10 +60,11 @@ class MongoDB extends ICrud {
   delete(id) {
     return this._schema.deleteOne({ _id: id});
   }
-
+/*
   close(connection) {
     return connection.close(true);
   }
+*/
 }
 
 module.exports = MongoDB;

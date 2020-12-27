@@ -58,11 +58,11 @@ class Postgres extends ICrud {
 
     return connection;
   };
-
+/*
   close(connection) {
-    return connection.close();
+    return Sequelize.close();
   }
-
+*/
 
 }
 

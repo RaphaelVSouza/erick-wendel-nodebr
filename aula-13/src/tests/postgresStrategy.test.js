@@ -25,9 +25,6 @@ describe('Postgres Strategy', function () {
      await context.create(MOCK_HERO_UPDATE);
   });
 
-  this.afterAll(async () => {
-    context.close(connection);
-  })
   it('PostgresSQL Connection', async function () {
     const result = await context.isConnected();
 

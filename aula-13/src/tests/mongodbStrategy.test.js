@@ -36,9 +36,7 @@ describe('MongoDB Strategy', function () {
 
   });
 
-  this.afterAll(async () => {
-    context.close(connection);
-  })
+  //this.afterAll(() => context.close(connection))
 
   it('MongoDB Connection', async () => {
     const result = await context.isConnected();
