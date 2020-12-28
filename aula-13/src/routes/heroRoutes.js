@@ -63,8 +63,8 @@ class HeroRoutes extends BaseRoute {
         validate: {
           failAction,
           payload: {
-            name: Joi.string().min(3).max(100),
-            power: Joi.string().min(3).max(100),
+            name: Joi.string().required().min(3).max(100),
+            power: Joi.string().required().min(3).max(100),
           },
         }
       },
@@ -72,14 +72,57 @@ class HeroRoutes extends BaseRoute {
         try {
           const { name, power } = request.payload;
 
-          const hero = await this.db.create({ name, power });
-         return { message: 'Hero registred successfully', hero }
+          const { _id } = await this.db.create({ name, power });
+         return { message: 'Hero successfully registered', _id }
         } catch (error) {
           console.error('Error on read', error);
           return 'Internal server error';
         }
       },
     };
+  }
+
+  update() {
+    return {
+      path: '/heroes/{id}',
+      method: 'PATCH',
+      options: {
+        validate: {
+          params: {
+            id: Joi.string().required(),
+          },
+          payload: {
+            name: Joi.string().min(3).max(100),
+            power: Joi.string().min(3).max(100),
+          }
+        }
+      },
+
+      handler: async (request) => {
+        try {
+          const {
+            id
+          } = request.params;
+
+          const { payload } = request;
+
+          const data = JSON.parse(JSON.stringify(payload));
+
+          const result = await this.db.update(id, data);
+
+          if(result.nModified !== 1) return {
+            message: 'Could not update hero'
+          }
+
+          return {
+            message: 'Hero successfully updated', result
+          }
+        } catch (error) {
+          console.error('Error on update', error)
+          return 'Internal server error'
+        }
+      }
+    }
   }
 }
 
