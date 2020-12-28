@@ -113,9 +113,47 @@ describe('Test suit for api heroes', function() {
       payload: JSON.stringify(expected)
     });
 
+    const expectedError = {
+      statusCode: 412,
+      error: 'Precondition Failed',
+      message: 'ID not found in database'
+    }
+
+    const statusCode = result.statusCode;
+    assert.ok(statusCode === 412);
+    const data = JSON.parse(result.payload);
+    assert.deepStrictEqual(data, expectedError)
+  });
+
+  it('DELETE', async () => {
+    const _id = MOCK_ID;
+    const result = await app.inject({
+      method: 'DELETE',
+      url: `/heroes/${_id}`
+    });
+
     const statusCode = result.statusCode;
     const data = JSON.parse(result.payload);
+
     assert.ok(statusCode === 200);
-    assert.deepStrictEqual(data.message, 'Could not update hero')
+    assert.deepStrictEqual(data.message, 'Hero successfully removed')
   });
+
+  it('NOT DELETE if incorrect ID', async () => {
+    const incorrectId = '2b2b2b2b2b21b1a1a1a1a1a1';
+    const result = await app.inject({
+      method: 'DELETE',
+      url: `/heroes/${incorrectId}`
+    });
+
+    const expectedError = {
+      statusCode: 412,
+      error: 'Precondition Failed',
+      message: 'ID not found in database'
+    }
+    const statusCode = result.statusCode;
+    assert.ok(statusCode === 412);
+    const data = JSON.parse(result.payload);
+    assert.deepStrictEqual(data, expectedError)
+  })
 });

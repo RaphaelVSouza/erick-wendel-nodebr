@@ -1,4 +1,6 @@
 const BaseRoute = require('./base/baseRoute');
+const Boom = require('boom');
+
 const Joi = require('joi');
 
 const failAction =
@@ -49,7 +51,7 @@ class HeroRoutes extends BaseRoute {
           return result;
         } catch (error) {
           console.error('Error on read', error);
-          return 'Internal server error';
+          return Boom.internal();
         }
       },
     };
@@ -76,7 +78,7 @@ class HeroRoutes extends BaseRoute {
          return { message: 'Hero successfully registered', _id }
         } catch (error) {
           console.error('Error on read', error);
-          return 'Internal server error';
+          return Boom.internal();
         }
       },
     };
@@ -88,6 +90,7 @@ class HeroRoutes extends BaseRoute {
       method: 'PATCH',
       options: {
         validate: {
+          failAction,
           params: {
             id: Joi.string().required(),
           },
@@ -110,16 +113,37 @@ class HeroRoutes extends BaseRoute {
 
           const result = await this.db.update(id, data);
 
-          if(result.nModified !== 1) return {
-            message: 'Could not update hero'
-          }
+          if(result.nModified !== 1) return Boom.preconditionFailed('ID not found in database');
 
           return {
             message: 'Hero successfully updated', result
           }
         } catch (error) {
           console.error('Error on update', error)
-          return 'Internal server error'
+          return Boom.internal()
+        }
+      }
+    }
+  }
+
+  delete() {
+    return {
+      path: '/heroes/{id}',
+      method: 'DELETE',
+      handler: async (request) => {
+        try {
+          const { id } = request.params;
+
+          const result = await this.db.delete(id);
+
+          if(result.n !== 1) return Boom.preconditionFailed('ID not found in database');
+
+          return {
+            message: 'Hero successfully removed'
+          }
+        } catch (error) {
+          console.error('Error on delete', error)
+          return Boom.internal()
         }
       }
     }
