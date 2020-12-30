@@ -14,8 +14,8 @@ class ContextStrategy extends ICrud {
     return this._database.read(item, skip, limit);
   }
 
-  update(id, item) {
-    return this._database.update(id, item);
+  update(id, item, upsert = false) {
+    return this._database.update(id, item, upsert);
   }
 
   delete(id) {
@@ -29,7 +29,7 @@ class ContextStrategy extends ICrud {
   static connect() {
     return this._database.connect();
   }
-/*
+  /*
   close(connection) {
     return this._database.close(connection);
   }

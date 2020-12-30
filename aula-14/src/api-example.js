@@ -4,7 +4,7 @@ const Hero = require('./database/strategies/mongodb/schemas/heroes');
 const Context = require('./database/strategies/base/contextStrategy');
 
 const app = new Hapi.Server({
-  port: 3001
+  port: 3001,
 });
 
 async function main() {
@@ -15,16 +15,12 @@ async function main() {
     {
       path: '/heroes',
       method: 'GET',
-      handler: (req, res) => {
-        return context.read();
-      }
-    }
-  ])
+      handler: (req, res) => context.read(),
+    },
+  ]);
 
-  await app.start()
+  await app.start();
   console.log(`Server running on port ${app.info.port}`);
-
-};
-
+}
 
 main();

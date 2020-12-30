@@ -33,10 +33,9 @@ describe('MongoDB Strategy', function () {
 
     const result = await context.create(MOCK_HERO_UPDATE);
     MOCK_HERO_ID = result._id;
-
   });
 
-  //this.afterAll(() => context.close(connection))
+  // this.afterAll(() => context.close(connection))
 
   it('MongoDB Connection', async () => {
     const result = await context.isConnected();
@@ -66,8 +65,8 @@ describe('MongoDB Strategy', function () {
 
   it('Update', async () => {
     const result = await context.update(MOCK_HERO_ID, {
-      name: 'Pernalonga'
-    })
+      name: 'Pernalonga',
+    });
 
     assert.deepStrictEqual(result.nModified, 1);
   });
@@ -75,5 +74,5 @@ describe('MongoDB Strategy', function () {
   it('Delete', async () => {
     const result = await context.delete(MOCK_HERO_ID);
     assert.deepStrictEqual(result.n, 1);
-  })
+  });
 });

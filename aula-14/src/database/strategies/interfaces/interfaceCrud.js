@@ -32,7 +32,6 @@ class ICrud {
   close(connection) {
     throw new NotImplementedException();
   }
-
 }
 
 module.exports = ICrud;
